@@ -6,7 +6,7 @@ class Php2Pg
 {
     public static function php2pg($phpArray)
     {
-        settype($phpArray, 'array'); // can be called with a scalar or array
+        settype($phpArray, 'array');
         $result = array();
 
         foreach ($phpArray as $element)
@@ -16,14 +16,13 @@ class Php2Pg
             }
             else
             {
-                $element = str_replace('"', '\\"', $element); // escape double quote
-                if (! is_numeric( $element )) // quote only non-numeric values
+                if (! is_numeric( $element ))
                     $element = '"' . $element . '"';
                 $result[] = $element;
             }
         }
 
-        return '{' . implode(",", $result) . '}'; // format
+        return '{' . implode(",", $result) . '}';
     }
 }
 
@@ -31,28 +30,51 @@ class Pg2Php
 {
     public static function pg2php( $pgArray )
     {
-        if ($pgArray == "'{}'" ||
-            empty($pgArray) ||
-            $pgArray == '{NULL}' )
+        $pgArray = trim( $pgArray );
+
+        if ( $pgArray == '{}' || empty( $pgArray ) || $pgArray == '{NULL}' )
         {
-             return array();
+            return array();
         }
         else
         {
-             $pgArray = trim($pgArray, "{}");
-             $phpArray = preg_split('/,(?=([^"]*"[^"]*"[^"]*)*$|[^"]*$)/' ,
-                 $pgArray
-             );
+            $matches = array();
+            if ( preg_match('/^{(.*)}$/', $pgArray, $matches) > 0 )
+            {
+                $pgString = $matches[1];
+            }
+            else
+            {
+                $pgString = $pgArray;
+            }
 
-             for ($i = 0; $i < sizeof( $phpArray ); $i++)
-             {
-                 $phpArray[$i] = trim( $phpArray[$i], "\"" );
-             }
+            /**
+             * RegEx using back references so that we can split on comma
+             * but still get any commas that may be inside double quotes
+             * i.e. a string element of the Pg array
+             */
+            $phpArray = preg_split('/,(?=([^"]*"[^"]*"[^"]*)*$|[^"]*$)/' , $pgString );
 
-             return $phpArray;
+            foreach( $phpArray as $element )
+            {
+                $element = trim($element);
+                if ( preg_match( '/^{.*}$/', $element))
+                {
+                    $result[] = Pg2Php::pg2php( trim( $element, '{}' ) );
+                }
+                else
+                {
+                    $matches = array();
+                    if ( preg_match('/^"(.*)"$/', $element, $matches) > 0 )
+                    {
+                        $element = $matches[1];
+                    }
+
+                    $result[] = trim( $element );
+                }
+            }
+
+            return $result;
          }
-     }
-        
     }
 }
-
