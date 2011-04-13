@@ -79,14 +79,17 @@ class Php2Pg2PhpTest
                 array('This is a string with "quotes inside"', '"9"'),
                 $pgEsc . '{"This is a string with \\"quotes inside\\"","\\"9\\""}' . "'",
             ),
-
             array
             (
                 array( 'This is an array that has an object inside', (object) array( 'prop' => 'val' ) ),
-                $pgEsc . '{"This is an array that has an object inside","' .
+                $pgEsc . '{"'. 'This is an array that has an object inside","' .
                 str_replace( '"', '\\"', serialize( (object) array( 'prop' => 'val' ) ) ) . '"}' . "'"
             ),
-
+            array
+            (
+                (object) array( 'prop' => 'val' ),
+                $pgEsc .'{"'. str_replace( '"', '\\"', serialize( (object) array( 'prop' => 'val' ) ) ) . '"}' . "'"
+            ),
         );
     }
     // @codeCoverageIgnoreEnd
@@ -100,7 +103,6 @@ class Php2Pg2PhpTest
     public function test_php2pg( $phpArray, $pgArray )
     {
         $output = Php2Pg::Php2Pg( $phpArray );
-        var_dump( $output ) . "\n";
         $this->assertEquals( $pgArray, $output, "Improper Php2Pg Conversion!" );
     }
 
