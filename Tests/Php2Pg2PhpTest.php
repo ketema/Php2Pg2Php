@@ -51,6 +51,9 @@ class Php2Pg2PhpTest
      */
     public function php2pg_provider()
     {
+        $obj = new \stdClass();
+        $obj->property = 'value';
+
         return array(
             array
             (
@@ -76,6 +79,11 @@ class Php2Pg2PhpTest
             (
                 array('This is a string with "quotes inside"', '"9"'),
                 '{"This is a string with "quotes inside"",""9""}',
+            ),
+            array
+            (
+                array( 'This is an array that has an object inside', $obj ),
+                '{"This is an array that has an object inside", ' . serialize( $obj ) . '}'
             )
         );
     }
