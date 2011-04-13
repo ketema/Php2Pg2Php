@@ -33,7 +33,7 @@
 
 namespace Php2Pg2Php;
 
-require_once 'Php2Pg2Php.php';
+require_once 'Php2Pg.php';
 require_once 'Pg2Php.php';
 
 /**
