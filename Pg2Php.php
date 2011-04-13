@@ -34,37 +34,64 @@
 namespace Php2Pg2Php;
 
 /**
- * Convert a php array into a Pg array string.
+ * Convert a Pg array string retrieved from a query into a php array.
  */
-class Php2Pg
+class Pg2Php
 {
     /**
-     * Convert a php array into a Pg array string.
+     * Convert a Pg array string retrieved from a query into a php array.
      *
-     * @param array $phpArray A php array.
+     * @param string $pgArray Pg array string
      *
-     * @return string    A Pg array string.
+     * @return array A php array
      */
-    public static function php2pg( $phpArray )
+    public static function pg2php( $pgArray )
     {
-        settype( $phpArray, 'array' );
+        $pgArray = trim( $pgArray );
 
-        $result = array();
-
-        foreach( $phpArray as $element )
+        if ( $pgArray == '{}' || empty( $pgArray ) || $pgArray == '{NULL}' )
         {
-            if( is_array( $element ) ){
-                $result[] = Php2Pg::php2pg( $element );
+            return array();
+        }
+        else
+        {
+            $matches = array();
+            if ( preg_match('/^{(.*)}$/', $pgArray, $matches) > 0 )
+            {
+                $pgString = $matches[1];
             }
             else
             {
-                if (! is_numeric( $element ) )
-                    $element = '"' . $element . '"';
-                $result[] = $element;
+                $pgString = $pgArray;
             }
-        }
 
-        return '{' . implode(",", $result) . '}';
+            /**
+             * RegEx using back references so that we can split on comma
+             * but still get any commas that may be inside double quotes
+             * i.e. a string element of the Pg array
+             */
+            $phpArray = preg_split('/,(?=([^"]*"[^"]*"[^"]*)*$|[^"]*$)/' , $pgString );
+
+            foreach( $phpArray as $element )
+            {
+                $element = trim($element);
+                if ( preg_match( '/^{.*}$/', $element))
+                {
+                    $result[] = Pg2Php::pg2php( trim( $element, '{}' ) );
+                }
+                else
+                {
+                    $matches = array();
+                    if ( preg_match('/^"(.*)"$/', $element, $matches) > 0 )
+                    {
+                        $element = $matches[1];
+                    }
+
+                    $result[] = trim( $element );
+                }
+            }
+
+            return $result;
+         }
     }
 }
-
