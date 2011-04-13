@@ -47,6 +47,9 @@ class Pg2Php
      */
     public static function pg2php( $pgArray )
     {
+        $doubleQuote = <<<'DOUBLEQUOTE'
+"
+DOUBLEQUOTE;
         $pgArray = trim( $pgArray );
 
         if ( $pgArray == '{}' || empty( $pgArray ) || $pgArray == '{NULL}' )
@@ -86,6 +89,20 @@ class Pg2Php
                     if ( preg_match('/^"(.*)"$/', $element, $matches) > 0 )
                     {
                         $element = $matches[1];
+                        //Need to determine if it has a serializd object inside
+                        try
+                        {
+                            if( preg_match( '/\\\"/', $element ) )
+                            {
+                                $element = preg_replace( '/\\\"/', $doubleQuote, $element );
+                            }
+                            $var = unserialize( "$element" );
+                            if( is_object( $var ) )
+                            {
+                                $element = $var;
+                            }
+                        }
+                        catch (Exception $e ) { }
                     }
 
                     $result[] = trim( $element );

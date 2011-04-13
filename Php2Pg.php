@@ -39,8 +39,6 @@ namespace Php2Pg2Php;
 class Php2Pg
 {
 
-    const PGESC = "E'";
-
     /**
      * Convert a php array into a Pg array string.
      *
@@ -71,9 +69,7 @@ class Php2Pg
         foreach( $phpArray as $element )
         {
             if( is_array( $element ) ){
-                $matches = array();
-                preg_match( "/^E'(.*)'$/", Php2Pg::php2pg( $element ), $matches );
-                $result[] = $matches[1];
+                $result[] = Php2Pg::php2pg( $element );
             }
             else
             {
@@ -84,6 +80,6 @@ class Php2Pg
             }
         }
 
-        return Php2Pg::PGESC . '{' . implode(",", $result) . '}'. "'";
+        return '{' . implode(",", $result) . '}';
     }
 }

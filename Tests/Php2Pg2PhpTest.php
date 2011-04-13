@@ -43,6 +43,26 @@ class Php2Pg2PhpTest
     extends \PHPUnit_Framework_TestCase
 {
 
+    public static function setUpBeforeClass()
+    {
+
+    }
+
+    public function setUp()
+    {
+        $this->fixture = new \stdClass();
+        $this->assertInstanceOf( '\stdClass', $this->fixture );
+        $this->fixture->db = pg_connect( 'user=ketema' );
+        $this->assertInternalType( \PHPUnit_Framework_Constraint_IsType::TYPE_RESOURCE, $this->fixture->db );
+
+        $this->fixture->obj = new \stdClass();
+        $this->fixture->obj->prop = 'val';
+        $this->assertInstanceOf( '\stdClass', $this->fixture->obj );
+
+        $this->fixture->serialObj = serialize( $this->fixture->obj );
+        $this->assertInternalType( 'string', $this->fixture->serialObj );
+    }
+
     // @codeCoverageIgnoreStart
     /**
      * Provides data to the php2pg test
@@ -51,44 +71,48 @@ class Php2Pg2PhpTest
      */
     public function php2pg_provider()
     {
-        $pgEsc = "E'";
+        $fixture = new \stdClass();
+        $fixture->db = pg_connect( 'user=ketema' );
+        $fixture->obj = new \stdClass();
+        $fixture->obj->prop = 'val';
+        $fixture->serialObj = serialize( $fixture->obj );
 
         return array(
             array
             (
                 array(1,2,3),
-                $pgEsc . '{1,2,3}' . "'",
+                '{1,2,3}',
             ),
             array
             (
                 array('Hello', 'World!'),
-                $pgEsc . '{"Hello","World!"}'. "'",
+                '{"Hello","World!"}',
             ),
             array
             (
                 array('String', 9, 'and', 5, 'Digits'),
-                $pgEsc . '{"String",9,"and",5,"Digits"}' . "'",
+                '{"String",9,"and",5,"Digits"}',
             ),
             array
             (
                 array( array(1), array(2), array(3) ),
-                $pgEsc . '{{1},{2},{3}}' . "'",
+                '{{1},{2},{3}}',
             ),
             array
             (
                 array('This is a string with "quotes inside"', '"9"'),
-                $pgEsc . '{"This is a string with \\"quotes inside\\"","\\"9\\""}' . "'",
+                '{"This is a string with \\"quotes inside\\"","\\"9\\""}',
             ),
             array
             (
-                array( 'This is an array that has an object inside', (object) array( 'prop' => 'val' ) ),
-                $pgEsc . '{"'. 'This is an array that has an object inside","' .
-                str_replace( '"', '\\"', serialize( (object) array( 'prop' => 'val' ) ) ) . '"}' . "'"
+                array( 'This is an array that has an object inside', $fixture->obj ),
+                '{"' . 'This is an array that has an object inside","' .
+                '{"O:8:\\\"stdClass\\\":1:{s:4:\\\"prop\\\";s:3:\\\"val\\\";}"}',
             ),
             array
             (
-                (object) array( 'prop' => 'val' ),
-                $pgEsc .'{"'. str_replace( '"', '\\"', serialize( (object) array( 'prop' => 'val' ) ) ) . '"}' . "'"
+                $fixture->obj,
+                '{"O:8:\\\"stdClass\\\":1:{s:4:\\\"prop\\\";s:3:\\\"val\\\";}"}',
             ),
         );
     }
@@ -103,6 +127,15 @@ class Php2Pg2PhpTest
     public function test_php2pg( $phpArray, $pgArray )
     {
         $output = Php2Pg::Php2Pg( $phpArray );
+        $resource = pg_prepare( $this->fixture->db, 'array_lit', 'SELECT $1::varchar[]' );
+        $this->assertInternalType( \PHPUnit_Framework_Constraint_IsType::TYPE_RESOURCE, $resource );
+
+        $resource = pg_execute( $this->fixture->db, 'array_lit', array( $pgArray ) );
+        $this->assertInternalType( \PHPUnit_Framework_Constraint_IsType::TYPE_RESOURCE, $resource );
+
+        $resource = pg_execute( $this->fixture->db, 'array_lit', array( $output ) );
+        $this->assertInternalType( \PHPUnit_Framework_Constraint_IsType::TYPE_RESOURCE, $resource );
+
         $this->assertEquals( $pgArray, $output, "Improper Php2Pg Conversion!" );
     }
 
@@ -114,6 +147,16 @@ class Php2Pg2PhpTest
      */
     public function pg2php_provider()
     {
+        $fixture = new \stdClass();
+        $fixture->db = pg_connect( 'user=ketema' );
+        $fixture->obj = new \stdClass();
+        $fixture->obj->prop = 'val';
+        $fixture->serialObj = serialize( $fixture->obj );
+
+        $resource = pg_prepare( $fixture->db, 'array_lit', 'SELECT $1::varchar[]' );
+        $resource = pg_execute( $fixture->db, 'array_lit', array( '{"O:8:\\"stdClass\\":1:{s:4:\\"prop\\";s:3:\\"val\\";}"}' ) );
+        $result = pg_fetch_result( $resource, 0, 'varchar' );
+
         return array(
             array
             (
@@ -154,6 +197,11 @@ class Php2Pg2PhpTest
             (
                 '{"This is a string with "quotes inside"",""9""}',
                 array( 'This is a string with "quotes inside"', '"9"'),
+            ),
+            array
+            (
+                $result,
+                array( unserialize( $fixture->serialObj) ),
             )
         );
     }
@@ -170,6 +218,32 @@ class Php2Pg2PhpTest
         $output = Pg2Php::pg2php( $pgArray );
         $this->assertInternalType( 'array', $phpArray );
         $this->assertInternalType( 'array', $output );
+
         $this->assertEquals( $phpArray, $output, 'Improper Pg2Php Conversion!');
     }
+
+    public function test_obj_integration()
+    {
+        $pgArr = Php2Pg::php2pg( $this->fixture->obj );
+
+        $resource = pg_prepare( $this->fixture->db, 'array_lit', 'SELECT $1::varchar[]' );
+        $this->assertInternalType( \PHPUnit_Framework_Constraint_IsType::TYPE_RESOURCE, $resource );
+
+        $resource = pg_execute( $this->fixture->db, 'array_lit', array( $pgArr ) );
+        $this->assertInternalType( \PHPUnit_Framework_Constraint_IsType::TYPE_RESOURCE, $resource );
+        $result = pg_fetch_result( $resource, 1, 'varchar' );
+        $this->assertInternalType( 'string', $result );
+
+        $var = Pg2Php::pg2php( $resut );
+
+        $this->assertInternalType( 'array', $var );
+
+        foreach( $var as $serial )
+        {
+            $newvar = unserialize( $serial );
+            $this->assertInstanceOf( '\stdClass', $newvar );
+            $this->assertEquals( $this->fixture->obj, $newvar, 'Unserialized object is not the same as fixture object' );
+        }
+   }
+
 }
