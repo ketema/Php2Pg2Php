@@ -55,6 +55,7 @@ class Pg2Php
         }
         else
         {
+
             $matches = array();
             if ( preg_match('/^{(.*)}$/', $pgArray, $matches) > 0 )
             {

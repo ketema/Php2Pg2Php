@@ -38,6 +38,9 @@ namespace Php2Pg2Php;
  */
 class Php2Pg
 {
+
+    const PGESC = "E'";
+
     /**
      * Convert a php array into a Pg array string.
      *
@@ -47,24 +50,40 @@ class Php2Pg
      */
     public static function php2pg( $phpArray )
     {
+        if( is_object( $phpArray) )
+        {
+            $phpArray = array( $phpArray );
+        }
+
         settype( $phpArray, 'array' );
+
+        //Check for objects in the array
+        foreach( $phpArray as $key => $value )
+        {
+            if( is_object( $value ) )
+            {
+                $phpArray[$key] = str_replace( '"', '\\"', serialize( $value ) );
+            }
+        }
 
         $result = array();
 
         foreach( $phpArray as $element )
         {
             if( is_array( $element ) ){
-                $result[] = Php2Pg::php2pg( $element );
+                $matches = array();
+                preg_match( "/^E'(.*)'$/", Php2Pg::php2pg( $element ), $matches );
+                $result[] = $matches[1];
             }
             else
             {
+                $element = str_replace( '"', '\\"', $element );
                 if (! is_numeric( $element ) )
                     $element = '"' . $element . '"';
                 $result[] = $element;
             }
         }
 
-        return '{' . implode(",", $result) . '}';
+        return Php2Pg::PGESC . '{' . implode(",", $result) . '}'. "'";
     }
 }
-

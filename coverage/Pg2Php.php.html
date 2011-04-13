@@ -213,46 +213,47 @@
 <span class="lineNum" id="container55"><a name="55"></a><a href="#55" id="line55">      55</a> </span><span class="lineDeadCode">                :         }                                                                                                          </span>
 <span class="lineNum" id="container56"><a name="56"></a><a href="#56" id="line56">      56</a> </span>                :         else                                                                                                       
 <span class="lineNum" id="container57"><a name="57"></a><a href="#57" id="line57">      57</a> </span>                :         {                                                                                                          
-<span class="lineNum" id="container58"><a name="58"></a><a href="#58" id="line58">      58</a> </span><span class="lineCov">              5 :             $matches = array();                                                                                    </span>
-<span class="lineNum" id="container59"><a name="59"></a><a href="#59" id="line59">      59</a> </span><span class="lineCov">              5 :             if ( preg_match('/^{(.*)}$/', $pgArray, $matches) &gt; 0 )                                                </span>
-<span class="lineNum" id="container60"><a name="60"></a><a href="#60" id="line60">      60</a> </span><span class="lineCov">              5 :             {                                                                                                      </span>
-<span class="lineNum" id="container61"><a name="61"></a><a href="#61" id="line61">      61</a> </span><span class="lineCov">              5 :                 $pgString = $matches[1];                                                                           </span>
-<span class="lineNum" id="container62"><a name="62"></a><a href="#62" id="line62">      62</a> </span><span class="lineCov">              5 :             }                                                                                                      </span>
-<span class="lineNum" id="container63"><a name="63"></a><a href="#63" id="line63">      63</a> </span>                :             else                                                                                                   
-<span class="lineNum" id="container64"><a name="64"></a><a href="#64" id="line64">      64</a> </span>                :             {                                                                                                      
-<span class="lineNum" id="container65"><a name="65"></a><a href="#65" id="line65">      65</a> </span><span class="lineCov">              1 :                 $pgString = $pgArray;                                                                              </span>
-<span class="lineNum" id="container66"><a name="66"></a><a href="#66" id="line66">      66</a> </span>                :             }                                                                                                      
-<span class="lineNum" id="container67"><a name="67"></a><a href="#67" id="line67">      67</a> </span>                :                                                                                                                    
-<span class="lineNum" id="container68"><a name="68"></a><a href="#68" id="line68">      68</a> </span>                :             /**                                                                                                    
-<span class="lineNum" id="container69"><a name="69"></a><a href="#69" id="line69">      69</a> </span>                :              * RegEx using back references so that we can split on comma                                           
-<span class="lineNum" id="container70"><a name="70"></a><a href="#70" id="line70">      70</a> </span>                :              * but still get any commas that may be inside double quotes                                           
-<span class="lineNum" id="container71"><a name="71"></a><a href="#71" id="line71">      71</a> </span>                :              * i.e. a string element of the Pg array                                                               
-<span class="lineNum" id="container72"><a name="72"></a><a href="#72" id="line72">      72</a> </span>                :              */                                                                                                    
-<span class="lineNum" id="container73"><a name="73"></a><a href="#73" id="line73">      73</a> </span><span class="lineCov">              5 :             $phpArray = preg_split('/,(?=([^&quot;]*&quot;[^&quot;]*&quot;[^&quot;]*)*$|[^&quot;]*$)/' , $pgString );                            </span>
-<span class="lineNum" id="container74"><a name="74"></a><a href="#74" id="line74">      74</a> </span>                :                                                                                                                    
-<span class="lineNum" id="container75"><a name="75"></a><a href="#75" id="line75">      75</a> </span><span class="lineCov">              5 :             foreach( $phpArray as $element )                                                                       </span>
-<span class="lineNum" id="container76"><a name="76"></a><a href="#76" id="line76">      76</a> </span>                :             {                                                                                                      
-<span class="lineNum" id="container77"><a name="77"></a><a href="#77" id="line77">      77</a> </span><span class="lineCov">              5 :                 $element = trim($element);                                                                         </span>
-<span class="lineNum" id="container78"><a name="78"></a><a href="#78" id="line78">      78</a> </span><span class="lineCov">              5 :                 if ( preg_match( '/^{.*}$/', $element))                                                            </span>
-<span class="lineNum" id="container79"><a name="79"></a><a href="#79" id="line79">      79</a> </span><span class="lineCov">              5 :                 {                                                                                                  </span>
-<span class="lineNum" id="container80"><a name="80"></a><a href="#80" id="line80">      80</a> </span><span class="lineCov">              1 :                     $result[] = Pg2Php::pg2php( trim( $element, '{}' ) );                                          </span>
-<span class="lineNum" id="container81"><a name="81"></a><a href="#81" id="line81">      81</a> </span><span class="lineCov">              1 :                 }                                                                                                  </span>
-<span class="lineNum" id="container82"><a name="82"></a><a href="#82" id="line82">      82</a> </span>                :                 else                                                                                               
-<span class="lineNum" id="container83"><a name="83"></a><a href="#83" id="line83">      83</a> </span>                :                 {                                                                                                  
-<span class="lineNum" id="container84"><a name="84"></a><a href="#84" id="line84">      84</a> </span><span class="lineCov">              5 :                     $matches = array();                                                                            </span>
-<span class="lineNum" id="container85"><a name="85"></a><a href="#85" id="line85">      85</a> </span><span class="lineCov">              5 :                     if ( preg_match('/^&quot;(.*)&quot;$/', $element, $matches) &gt; 0 )                                        </span>
-<span class="lineNum" id="container86"><a name="86"></a><a href="#86" id="line86">      86</a> </span><span class="lineCov">              5 :                     {                                                                                              </span>
-<span class="lineNum" id="container87"><a name="87"></a><a href="#87" id="line87">      87</a> </span><span class="lineCov">              3 :                         $element = $matches[1];                                                                    </span>
-<span class="lineNum" id="container88"><a name="88"></a><a href="#88" id="line88">      88</a> </span><span class="lineCov">              3 :                     }                                                                                              </span>
-<span class="lineNum" id="container89"><a name="89"></a><a href="#89" id="line89">      89</a> </span>                :                                                                                                                    
-<span class="lineNum" id="container90"><a name="90"></a><a href="#90" id="line90">      90</a> </span><span class="lineCov">              5 :                     $result[] = trim( $element );                                                                  </span>
-<span class="lineNum" id="container91"><a name="91"></a><a href="#91" id="line91">      91</a> </span>                :                 }                                                                                                  
-<span class="lineNum" id="container92"><a name="92"></a><a href="#92" id="line92">      92</a> </span><span class="lineCov">              5 :             }                                                                                                      </span>
-<span class="lineNum" id="container93"><a name="93"></a><a href="#93" id="line93">      93</a> </span>                :                                                                                                                    
-<span class="lineNum" id="container94"><a name="94"></a><a href="#94" id="line94">      94</a> </span><span class="lineCov">              5 :             return $result;                                                                                        </span>
-<span class="lineNum" id="container95"><a name="95"></a><a href="#95" id="line95">      95</a> </span>                :          }                                                                                                         
-<span class="lineNum" id="container96"><a name="96"></a><a href="#96" id="line96">      96</a> </span><span class="lineDeadCode">                :     }                                                                                                              </span>
-<span class="lineNum" id="container97"><a name="97"></a><a href="#97" id="line97">      97</a> </span>                : }                                                                                                                  
+<span class="lineNum" id="container58"><a name="58"></a><a href="#58" id="line58">      58</a> </span>                :                                                                                                                    
+<span class="lineNum" id="container59"><a name="59"></a><a href="#59" id="line59">      59</a> </span><span class="lineCov">              5 :             $matches = array();                                                                                    </span>
+<span class="lineNum" id="container60"><a name="60"></a><a href="#60" id="line60">      60</a> </span><span class="lineCov">              5 :             if ( preg_match('/^{(.*)}$/', $pgArray, $matches) &gt; 0 )                                                </span>
+<span class="lineNum" id="container61"><a name="61"></a><a href="#61" id="line61">      61</a> </span><span class="lineCov">              5 :             {                                                                                                      </span>
+<span class="lineNum" id="container62"><a name="62"></a><a href="#62" id="line62">      62</a> </span><span class="lineCov">              5 :                 $pgString = $matches[1];                                                                           </span>
+<span class="lineNum" id="container63"><a name="63"></a><a href="#63" id="line63">      63</a> </span><span class="lineCov">              5 :             }                                                                                                      </span>
+<span class="lineNum" id="container64"><a name="64"></a><a href="#64" id="line64">      64</a> </span>                :             else                                                                                                   
+<span class="lineNum" id="container65"><a name="65"></a><a href="#65" id="line65">      65</a> </span>                :             {                                                                                                      
+<span class="lineNum" id="container66"><a name="66"></a><a href="#66" id="line66">      66</a> </span><span class="lineCov">              1 :                 $pgString = $pgArray;                                                                              </span>
+<span class="lineNum" id="container67"><a name="67"></a><a href="#67" id="line67">      67</a> </span>                :             }                                                                                                      
+<span class="lineNum" id="container68"><a name="68"></a><a href="#68" id="line68">      68</a> </span>                :                                                                                                                    
+<span class="lineNum" id="container69"><a name="69"></a><a href="#69" id="line69">      69</a> </span>                :             /**                                                                                                    
+<span class="lineNum" id="container70"><a name="70"></a><a href="#70" id="line70">      70</a> </span>                :              * RegEx using back references so that we can split on comma                                           
+<span class="lineNum" id="container71"><a name="71"></a><a href="#71" id="line71">      71</a> </span>                :              * but still get any commas that may be inside double quotes                                           
+<span class="lineNum" id="container72"><a name="72"></a><a href="#72" id="line72">      72</a> </span>                :              * i.e. a string element of the Pg array                                                               
+<span class="lineNum" id="container73"><a name="73"></a><a href="#73" id="line73">      73</a> </span>                :              */                                                                                                    
+<span class="lineNum" id="container74"><a name="74"></a><a href="#74" id="line74">      74</a> </span><span class="lineCov">              5 :             $phpArray = preg_split('/,(?=([^&quot;]*&quot;[^&quot;]*&quot;[^&quot;]*)*$|[^&quot;]*$)/' , $pgString );                            </span>
+<span class="lineNum" id="container75"><a name="75"></a><a href="#75" id="line75">      75</a> </span>                :                                                                                                                    
+<span class="lineNum" id="container76"><a name="76"></a><a href="#76" id="line76">      76</a> </span><span class="lineCov">              5 :             foreach( $phpArray as $element )                                                                       </span>
+<span class="lineNum" id="container77"><a name="77"></a><a href="#77" id="line77">      77</a> </span>                :             {                                                                                                      
+<span class="lineNum" id="container78"><a name="78"></a><a href="#78" id="line78">      78</a> </span><span class="lineCov">              5 :                 $element = trim($element);                                                                         </span>
+<span class="lineNum" id="container79"><a name="79"></a><a href="#79" id="line79">      79</a> </span><span class="lineCov">              5 :                 if ( preg_match( '/^{.*}$/', $element))                                                            </span>
+<span class="lineNum" id="container80"><a name="80"></a><a href="#80" id="line80">      80</a> </span><span class="lineCov">              5 :                 {                                                                                                  </span>
+<span class="lineNum" id="container81"><a name="81"></a><a href="#81" id="line81">      81</a> </span><span class="lineCov">              1 :                     $result[] = Pg2Php::pg2php( trim( $element, '{}' ) );                                          </span>
+<span class="lineNum" id="container82"><a name="82"></a><a href="#82" id="line82">      82</a> </span><span class="lineCov">              1 :                 }                                                                                                  </span>
+<span class="lineNum" id="container83"><a name="83"></a><a href="#83" id="line83">      83</a> </span>                :                 else                                                                                               
+<span class="lineNum" id="container84"><a name="84"></a><a href="#84" id="line84">      84</a> </span>                :                 {                                                                                                  
+<span class="lineNum" id="container85"><a name="85"></a><a href="#85" id="line85">      85</a> </span><span class="lineCov">              5 :                     $matches = array();                                                                            </span>
+<span class="lineNum" id="container86"><a name="86"></a><a href="#86" id="line86">      86</a> </span><span class="lineCov">              5 :                     if ( preg_match('/^&quot;(.*)&quot;$/', $element, $matches) &gt; 0 )                                        </span>
+<span class="lineNum" id="container87"><a name="87"></a><a href="#87" id="line87">      87</a> </span><span class="lineCov">              5 :                     {                                                                                              </span>
+<span class="lineNum" id="container88"><a name="88"></a><a href="#88" id="line88">      88</a> </span><span class="lineCov">              3 :                         $element = $matches[1];                                                                    </span>
+<span class="lineNum" id="container89"><a name="89"></a><a href="#89" id="line89">      89</a> </span><span class="lineCov">              3 :                     }                                                                                              </span>
+<span class="lineNum" id="container90"><a name="90"></a><a href="#90" id="line90">      90</a> </span>                :                                                                                                                    
+<span class="lineNum" id="container91"><a name="91"></a><a href="#91" id="line91">      91</a> </span><span class="lineCov">              5 :                     $result[] = trim( $element );                                                                  </span>
+<span class="lineNum" id="container92"><a name="92"></a><a href="#92" id="line92">      92</a> </span>                :                 }                                                                                                  
+<span class="lineNum" id="container93"><a name="93"></a><a href="#93" id="line93">      93</a> </span><span class="lineCov">              5 :             }                                                                                                      </span>
+<span class="lineNum" id="container94"><a name="94"></a><a href="#94" id="line94">      94</a> </span>                :                                                                                                                    
+<span class="lineNum" id="container95"><a name="95"></a><a href="#95" id="line95">      95</a> </span><span class="lineCov">              5 :             return $result;                                                                                        </span>
+<span class="lineNum" id="container96"><a name="96"></a><a href="#96" id="line96">      96</a> </span>                :          }                                                                                                         
+<span class="lineNum" id="container97"><a name="97"></a><a href="#97" id="line97">      97</a> </span><span class="lineDeadCode">                :     }                                                                                                              </span>
+<span class="lineNum" id="container98"><a name="98"></a><a href="#98" id="line98">      98</a> </span>                : }                                                                                                                  
 
 </pre>
         </td>
@@ -261,7 +262,7 @@
 
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr><td class="ruler"><img src="glass.png" width="3" height="3" alt=""></td></tr>
-      <tr><td class="versionInfo">Generated by <a href="http://github.com/sebastianbergmann/php-code-coverage" target="_top">PHP_CodeCoverage 1.0.4</a> using <a href="http://www.php.net/" target="_top">PHP 5.3.6</a> and PHPUnit 3.5.13 at Tue Apr 12 21:43:40 EDT 2011.</td></tr>
+      <tr><td class="versionInfo">Generated by <a href="http://github.com/sebastianbergmann/php-code-coverage" target="_top">PHP_CodeCoverage 1.0.4</a> using <a href="http://www.php.net/" target="_top">PHP 5.3.6</a> and PHPUnit 3.5.13 at Wed Apr 13 0:15:21 EDT 2011.</td></tr>
     </table>
 
     <br />
@@ -291,11 +292,6 @@
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #0</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #1</li></ul>",
           "footer": ""
         },
-        "panel58": {
-          "header": "5 tests cover line 58",
-          "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
-          "footer": ""
-        },
         "panel59": {
           "header": "5 tests cover line 59",
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
@@ -316,23 +312,23 @@
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
           "footer": ""
         },
-        "panel65": {
-          "header": "1 test covers line 65",
+        "panel63": {
+          "header": "5 tests cover line 63",
+          "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
+          "footer": ""
+        },
+        "panel66": {
+          "header": "1 test covers line 66",
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li></ul>",
           "footer": ""
         },
-        "panel73": {
-          "header": "5 tests cover line 73",
+        "panel74": {
+          "header": "5 tests cover line 74",
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
           "footer": ""
         },
-        "panel75": {
-          "header": "5 tests cover line 75",
-          "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
-          "footer": ""
-        },
-        "panel77": {
-          "header": "5 tests cover line 77",
+        "panel76": {
+          "header": "5 tests cover line 76",
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
           "footer": ""
         },
@@ -347,8 +343,8 @@
           "footer": ""
         },
         "panel80": {
-          "header": "1 test covers line 80",
-          "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li></ul>",
+          "header": "5 tests cover line 80",
+          "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
           "footer": ""
         },
         "panel81": {
@@ -356,9 +352,9 @@
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li></ul>",
           "footer": ""
         },
-        "panel84": {
-          "header": "5 tests cover line 84",
-          "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
+        "panel82": {
+          "header": "1 test covers line 82",
+          "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li></ul>",
           "footer": ""
         },
         "panel85": {
@@ -372,8 +368,8 @@
           "footer": ""
         },
         "panel87": {
-          "header": "3 tests cover line 87",
-          "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
+          "header": "5 tests cover line 87",
+          "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
           "footer": ""
         },
         "panel88": {
@@ -381,18 +377,23 @@
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
           "footer": ""
         },
-        "panel90": {
-          "header": "5 tests cover line 90",
+        "panel89": {
+          "header": "3 tests cover line 89",
+          "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
+          "footer": ""
+        },
+        "panel91": {
+          "header": "5 tests cover line 91",
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
           "footer": ""
         },
-        "panel92": {
-          "header": "5 tests cover line 92",
+        "panel93": {
+          "header": "5 tests cover line 93",
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
           "footer": ""
         },
-        "panel94": {
-          "header": "5 tests cover line 94",
+        "panel95": {
+          "header": "5 tests cover line 95",
           "body": "<ul><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #2</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #3</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #4</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #5</li><li class=\"testPassed\">Php2Pg2Php\\Php2Pg2PhpTest::test_pg2php with data set #6</li></ul>",
           "footer": ""
         },

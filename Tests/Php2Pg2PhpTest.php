@@ -51,40 +51,42 @@ class Php2Pg2PhpTest
      */
     public function php2pg_provider()
     {
-        $obj = new \stdClass();
-        $obj->property = 'value';
+        $pgEsc = "E'";
 
         return array(
             array
             (
                 array(1,2,3),
-                '{1,2,3}',
+                $pgEsc . '{1,2,3}' . "'",
             ),
             array
             (
                 array('Hello', 'World!'),
-                '{"Hello","World!"}',
+                $pgEsc . '{"Hello","World!"}'. "'",
             ),
             array
             (
                 array('String', 9, 'and', 5, 'Digits'),
-                '{"String",9,"and",5,"Digits"}',
+                $pgEsc . '{"String",9,"and",5,"Digits"}' . "'",
             ),
             array
             (
                 array( array(1), array(2), array(3) ),
-                '{{1},{2},{3}}',
+                $pgEsc . '{{1},{2},{3}}' . "'",
             ),
             array
             (
                 array('This is a string with "quotes inside"', '"9"'),
-                '{"This is a string with "quotes inside"",""9""}',
+                $pgEsc . '{"This is a string with \\"quotes inside\\"","\\"9\\""}' . "'",
             ),
+
             array
             (
-                array( 'This is an array that has an object inside', $obj ),
-                '{"This is an array that has an object inside", ' . serialize( $obj ) . '}'
-            )
+                array( 'This is an array that has an object inside', (object) array( 'prop' => 'val' ) ),
+                $pgEsc . '{"This is an array that has an object inside","' .
+                str_replace( '"', '\\"', serialize( (object) array( 'prop' => 'val' ) ) ) . '"}' . "'"
+            ),
+
         );
     }
     // @codeCoverageIgnoreEnd
@@ -98,6 +100,7 @@ class Php2Pg2PhpTest
     public function test_php2pg( $phpArray, $pgArray )
     {
         $output = Php2Pg::Php2Pg( $phpArray );
+        var_dump( $output ) . "\n";
         $this->assertEquals( $pgArray, $output, "Improper Php2Pg Conversion!" );
     }
 
